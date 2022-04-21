@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Coin-Run</title>
+</head>
+
+<body>
+    <div id="my-title">
+        <h1>Coin-Run</h1>
+    </div>
+
+    <br>
+    <button id="show-modal">Instructions and Scores</button>
+    <hr>
+
+    <div id="modal">
+        <div class="modal-container">
+            <h2><u>Instructions and Scores</u></h2>
+            <p>Use the left and right arrow-keys to move around.</p>
+            <p>Use the Space Key to move upwards!</p>
+            <p>Collect the most number of coins in 30 seconds!</p>
+
+            <p>Current High Score: <span id="high-score">0</span> points</p>
+
+            <button id="hide-modal">Exit</button>
+        </div>
+    </div>
+
+    <canvas id="myCanvas"></canvas>
+
+    <p><button id="begin-play">Play Again</button> Current Score: <span id="playerScore">0</span></p>
+
+    <img id="starImg" src="star-image.png">
+
+    <script src="script.js"></script>
+</body>
+</html>
