@@ -1,4 +1,5 @@
 // Coin Runner
+//TEST GITHUB
 
 // Setup Canvas and Graphics Context
 let cnv = document.getElementById("myCanvas");
@@ -15,10 +16,12 @@ let playBtnEl = document.getElementById("begin-play")
 let highScoreEl = document.getElementById("high-score");
 let titleEl = document.getElementById("my-title")
 let starImgEl = document.getElementById("starImg");
+let lightningImgEl = document.getElementById("lightningImg");
 
 // Global Variables
 let circleX = 400;
 let circleY = 400;
+let cRadius = 25;
 let leftKeyIsPressed = false;
 let rightKeyIsPressed = false;
 let spaceKeyIsPressed = false;
@@ -35,6 +38,12 @@ let triX = 20;
 let triY = triX - 2.5;
 let starX = 100;
 let starY = 700;
+let starMove = true;
+let boltMove = true;
+let collectRadius = 25; 
+let boltX = 400;
+let boltY = 200;
+let speedLR = 5;
 
 // MODAL STUFF
 showModalEl.addEventListener("click", showModal);
@@ -68,10 +77,16 @@ document.addEventListener("click", changeColor);
 ////////////////////////////////////////////////
 
 
-
 playBtnEl.addEventListener("click", resetGame);
 
 function resetGame() {
+    // Reset Widths and Radii
+    collectRadius = 25;
+    cRadius = 25;
+    starMove = true;
+    boltMove = true;
+    speedLR = 5;
+
     // Text "GO!"
     textX = 330;
     textY = 400;
@@ -119,10 +134,10 @@ function loop() {
     circleY += 10; 
 
     if (leftKeyIsPressed) {
-        circleX -= 5;
+        circleX -= speedLR;
     }
     if (rightKeyIsPressed) {
-        circleX += 5;
+        circleX += speedLR;
     }
     if (spaceKeyIsPressed) {
         circleY -= 20;
@@ -140,17 +155,67 @@ function loop() {
         circleX = 25;
     }
 
-    // Draw Player Circle
-    ctx.fillStyle = "blue";
-    ctx.beginPath();
-    ctx.arc(circleX, circleY, 25, 0, 2 * Math.PI);
-    ctx.fill();
-
-    // Move Green-Square when Touched
+        // Random Number Function
     function getRandomInt(max) {
         return Math.floor(Math.random() * max);
     }
-    if (distance <= 25) {
+
+    // Lightning Image (Speed up boost)
+    ctx.drawImage(lightningImgEl, boltX, boltY, 60, 60);
+
+    // Random movement of Lightning Bolt
+    let random = getRandomInt(8);
+
+    if (boltMove) {
+        if (random === 1) {
+            boltX += 5;
+        } else if (random === 2) {
+            boltX -= 5;
+        } else if (random === 3) {
+            boltY -= 5;
+        } else if (random === 4) {
+            boltY += 5;
+        } else if (random === 5) {
+            boltX += 10;
+            boltY -= 10;
+        } else if (random === 6) {
+            boltX += 10;
+            boltY += 10;
+        } else if (random === 7) {
+            boltX -= 10;
+            boltY += 10;
+        } else {
+            boltX -= 10;
+            boltY -= 10;
+        }
+    }
+    
+    // Wrapping Around Bolt's Movement
+    if (boltX > 800) {
+        boltX = 0;
+    } else if (boltX < 0) {
+        boltX = 800;
+    } else if (boltY > 800) {
+        boltY = 0;
+    } else if (boltY < 0) {
+        boltY = 800;
+    }
+    let diffBoltX = ((circleX - boltX) ** 2)
+    let diffBoltY = ((circleY - boltY) ** 2)
+    let changeBolt = Math.sqrt(diffBoltX + diffBoltY);
+    if (changeBolt <= 20) {
+        speedLR = 15;
+        boltMove = false;
+    }
+
+    // Draw Player Circle
+    ctx.fillStyle = "blue";
+    ctx.beginPath();
+    ctx.arc(circleX, circleY, cRadius, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Move Green-Square when Touched
+    if (distance <= collectRadius) {
         score++;
         squareX = (getRandomInt(790));
         squareY = (getRandomInt(790));
@@ -169,7 +234,6 @@ function loop() {
 
     // Star Stuff
     ctx.drawImage(starImgEl, starX, starY, 20, 20);
-    let starMove = true;
 
     if (starMove) {
         starX += 8;
@@ -182,41 +246,46 @@ function loop() {
     // Distance Between Player and Star
     let diffStarX = ((circleX - starX) ** 2)
     let diffStarY = ((circleY - starY) ** 2)
-    let changeStar = Math.sqrt(diffStarX + diffStarY);
-    console.log(changeStar);
+    let changeStar = Math.sqrt(diffStarX + diffStarY);   
 
     if (changeStar <= 15) {
-        score += 3;
-        starMove = false;
-
-        setTimeout(starRestart, 5000);
-        function starRestart() {
-            starMove = true;
-        }
+        starMove = false;  
+        cRadius = 50;
+        collectRadius = 50;
     }
+
+
+    // Pink Triangle
+    // Location based on variable triX
+    ctx.fillStyle = "pink";
+    ctx.beginPath();
+    ctx.moveTo(triX, triY);
+    ctx.lineTo((triX - 7.5), (triY + 10));
+    ctx.lineTo((triX + 7.5), (triY + 10));
+    ctx.fill();
+
+    // Constantly Changing Triangle Location
+    // let pinkTriId;
+
+    // function moveTri() {
+    //     if (!pinkTriId) {
+    //         pinkTriId = setInterval(flashTri, 1000)
+    //     }
+    // }
+
+    // function flashTri() {
+    //     const oElem = 
+    // }
+
+
+    // Distance Between Player and Triangle
+    let changeTriX = ((circleX - triX) ** 2)
+    let changeTriY = ((circleY - triY) ** 2)
+    let triDistance = Math.sqrt(changeTriX + changeTriY);
+
 
     // Update Score
     playerScore.innerHTML = score;
-
-    // // Distance Between Player and Triangle
-    // let changeTriX = ((circleX - triX) ** 2)
-    // let changeTriY = ((circleY - triY) ** 2)
-    // let triDistance = Math.sqrt(changeTriX + changeTriY);
-
-    // // USE CONSTANT INTERVAL TO MOVE PINK TRIANGLE AROUND RANDOMLY
-    // let movingTriangle = setInterval(moveTri, 100);
-
-    // function moveTri() {
-    //     triX = (getRandomInt(790));
-    //     // Pink Triangle
-    //     // Location based on variable triX
-    //     ctx.fillStyle = "pink";
-    //     ctx.beginPath();
-    //     ctx.moveTo(triX, triY);
-    //     ctx.lineTo((triX - 7.5), (triY + 10));
-    //     ctx.lineTo((triX + 7.5), (triY + 10));
-    //     ctx.fill();
-    // }
 }
 
 // Keyboard Events
@@ -241,4 +310,5 @@ function keyupHandler(event) {
         spaceKeyIsPressed = false;
     }
 }
+
 
