@@ -257,12 +257,12 @@ function loop() {
 
     // Pink Triangle
     // Location based on variable triX
-    ctx.fillStyle = "pink";
-    ctx.beginPath();
-    ctx.moveTo(triX, triY);
-    ctx.lineTo((triX - 7.5), (triY + 10));
-    ctx.lineTo((triX + 7.5), (triY + 10));
-    ctx.fill();
+    // ctx.fillStyle = "pink";
+    // ctx.beginPath();
+    // ctx.moveTo(triX, triY);
+    // ctx.lineTo((triX - 7.5), (triY + 10));
+    // ctx.lineTo((triX + 7.5), (triY + 10));
+    // ctx.fill();
 
     // Constantly Changing Triangle Location
     // let pinkTriId;
